@@ -13,12 +13,12 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # 1. Checkout code
     - name: Checkout repository
       uses: actions/checkout@v3
-    
+
     # 2. Setup Node.js
     - name: Setup Node.js
       uses: actions/setup-node@v3
