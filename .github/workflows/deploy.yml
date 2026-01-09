@@ -56,4 +56,3 @@ jobs:
       run: |
         echo "Ìºê Your website is live at:"
         echo "http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com"
-
