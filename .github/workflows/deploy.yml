@@ -1,11 +1,9 @@
-# Fix the workflow file
+# Update the workflow file
 cat > .github/workflows/deploy.yml << 'EOF'
 name: Deploy React to AWS S3
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 env:
@@ -35,8 +33,6 @@ jobs:
     # 4. Build React app
     - name: Build React app
       run: npm run build
-      env:
-        CI: false
     
     # 5. Configure AWS credentials
     - name: Configure AWS credentials
@@ -49,13 +45,13 @@ jobs:
     # 6. Deploy to S3
     - name: Deploy to S3
       run: |
-        echo "🚀 Deploying to S3..."
+        echo "Deploying to S3..."
         aws s3 sync ./build/ s3://${{ env.S3_BUCKET }} --delete
-        echo "✅ Deployment complete!"
+        echo "Deployment complete!"
     
     # 7. Show website URL
     - name: Show website URL
       run: |
-        echo "🌐 Your website is live at:"
+        echo "Your website is live at:"
         echo "http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com"
 EOF
