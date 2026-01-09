@@ -1,0 +1,61 @@
+# Fix the workflow file
+cat > .github/workflows/deploy.yml << 'EOF'
+name: Deploy React to AWS S3
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: my-portfolio-website-prod-suhail
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    # 2. Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: npm ci
+    
+    # 4. Build React app
+    - name: Build React app
+      run: npm run build
+      env:
+        CI: false
+    
+    # 5. Configure AWS credentials
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    # 6. Deploy to S3
+    - name: Deploy to S3
+      run: |
+        echo "🚀 Deploying to S3..."
+        aws s3 sync ./build/ s3://${{ env.S3_BUCKET }} --delete
+        echo "✅ Deployment complete!"
+    
+    # 7. Show website URL
+    - name: Show website URL
+      run: |
+        echo "🌐 Your website is live at:"
+        echo "http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com"
+EOF
